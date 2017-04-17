@@ -1,0 +1,8 @@
+---
+- include: ../playbooks/hosts.yml
+#- include: ../playbooks/k8srepo.yml
+#- include: ../playbooks/packages.yml
+#- include: ../playbooks/commands.yml
+#- include: ../playbooks/configure.yml
+#- include: ../playbooks/master.yml
+#- include: ../playbooks/slave.yml

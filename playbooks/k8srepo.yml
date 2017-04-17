@@ -1,0 +1,10 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+      - name: template repos for k8s
+        action: template src=../templates/k8srepo.j2 dest=/etc/yum.repos.d/virt7-docker-common-release.repo
+      - name: yum check-update
+        shell: 'yum check-update || test $? -eq 100'
+
+

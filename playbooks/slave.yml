@@ -1,0 +1,30 @@
+---
+- hosts: k8s_slave 
+  sudo: yes
+  tasks:
+      - name: kubelet config on slave 
+        action: template src=../templates/etc/kubernetes/kubelet.j2 dest=/etc/kubernetes/kubelet
+      - name: flanneld config on slave 
+        action: template src=../templates/etc/sysconfig/flanneld.j2 dest=/etc/sysconfig/flanneld
+      - name: enable all services
+        command: systemctl enable {{ item }}
+        with_items: 
+         - kube-proxy 
+         - kubelet 
+         - flanneld 
+         - docker
+      - name: restart all services
+        command: systemctl restart {{ item }}
+        with_items: 
+         - kube-proxy 
+         - kubelet 
+         - flanneld 
+         - docker
+      - name: status all services
+        command: systemctl status {{ item }}
+        with_items: 
+         - kube-proxy 
+         - kubelet 
+         - flanneld 
+         - docker
+ 

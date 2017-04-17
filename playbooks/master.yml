@@ -1,0 +1,40 @@
+---
+- hosts: master
+  sudo: yes
+  tasks:
+      - name: etcd config
+        action: template src=../templates/etc/etcd/etcd.j2 dest=/etc/etcd/etcd.conf
+      - name: kubernetes apiserver  config
+        action: template src=../templates/etc/kubernetes/apiserver.j2 dest=/etc/kubernetes/apiserver
+      - name: kubernetes apiserver  config
+        action: template src=../templates/etc/sysconfig/flanneld.j2 dest=/etc/sysconfig/flanneld
+      - name: start etcd
+        command: systemctl start etcd
+      - name: create configuration 
+        command: etcdctl mkdir /kube-centos/network
+      - name: create subnet for etcd
+        command: 'etcdctl mk /kube-centos/network/config "{ \"Network\": \"172.30.0.0/16\", \"SubnetLen\": 24, \"Backend\": { \"Type\": \"vxlan\" } }"'
+      - name: enable all services
+        command: systemctl enable {{ item }}
+        with_items: 
+         - etcd 
+         - kube-apiserver 
+         - kube-controller-manager 
+         - kube-scheduler 
+         - flanneld 
+      - name: restart all services
+        command: systemctl restart {{ item }}
+        with_items: 
+         - etcd 
+         - kube-apiserver 
+         - kube-controller-manager 
+         - kube-scheduler 
+         - flanneld 
+      - name: status all services
+        command: systemctl status {{ item }}
+        with_items: 
+         - etcd 
+         - kube-apiserver 
+         - kube-controller-manager 
+         - kube-scheduler 
+         - flanneld 
